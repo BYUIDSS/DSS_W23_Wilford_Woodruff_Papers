@@ -7,7 +7,7 @@ Description:
 import pandas as pd
 
 # load data
-url = "wwp.csv"
+url = "https://github.com/BYUIDSS/DSS_S22_Wilford_Woodruff_Papers/blob/master/raw_data/wwp.csv?raw=true"
 wwp = pd.read_csv(url, encoding = 'unicode_escape')
 
 DOC_TYPE_INDEX = 1

@@ -1,17 +1,25 @@
 '''
 Description:
     - Creates txt file for each document type found in raw csv file
+    - Deletes previously derived data to avoid repeating text
     - Appends text-only transcripts to corresponding txt files
 '''
 
+import os
 import pandas as pd
 
 # load data
-url = "https://github.com/BYUIDSS/DSS_S22_Wilford_Woodruff_Papers/blob/master/raw_data/wwp.csv?raw=true"
-wwp = pd.read_csv(url, encoding = 'unicode_escape')
+file_path = "raw_data/wwp.csv"
+wwp = pd.read_csv(file_path, encoding = 'unicode_escape')
 
 DOC_TYPE_INDEX = 1
 TEXT_INDEX = 9
+
+# erase previously derived data
+for doc_type in wwp['Document Type'].unique():
+    file_path = f"derived_data/{doc_type.lower()}.txt"
+    if os.path.exists(file_path):
+        os.remove(file_path)
 
 # iterate through dataframe
 for index, row in wwp.iterrows():
@@ -21,5 +29,6 @@ for index, row in wwp.iterrows():
     text = row[TEXT_INDEX]
 
     # write to file
-    with open(f"{doc_type.lower()}.txt", 'a', encoding = 'utf-8') as txt_file:
+    file_path = f"derived_data/{doc_type.lower()}.txt"
+    with open(file_path, 'a', encoding = 'utf-8') as txt_file:
         txt_file.write(str(text))

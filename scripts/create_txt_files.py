@@ -7,13 +7,14 @@ Description:
 
 import os
 import pandas as pd
+from bs4 import BeautifulSoup
 
 # load data
 file_path = "raw_data/wwp.csv"
 wwp = pd.read_csv(file_path, encoding = 'unicode_escape')
 
 DOC_TYPE_INDEX = 1
-TEXT_INDEX = 9
+TRANSCRIPT_INDEX = 8
 
 # erase previously derived data
 for doc_type in wwp['Document Type'].unique():
@@ -24,11 +25,12 @@ for doc_type in wwp['Document Type'].unique():
 # iterate through dataframe
 for index, row in wwp.iterrows():
 
-    # get document type and text-only transcript
+    # get document type and transcript
     doc_type = row[DOC_TYPE_INDEX]
-    text = row[TEXT_INDEX]
+    transcript = row[TRANSCRIPT_INDEX]
 
     # write to file
     file_path = f"derived_data/{doc_type.lower()}.txt"
     with open(file_path, 'a', encoding = 'utf-8') as txt_file:
-        txt_file.write(str(text))
+        soup = BeautifulSoup(str(transcript), 'html.parser')
+        txt_file.write(soup.get_text())

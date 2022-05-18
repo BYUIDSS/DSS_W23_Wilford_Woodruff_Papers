@@ -1,0 +1,98 @@
+---
+title: "Journals Sentiment Analysis"
+author: "Graham Hamblin"
+output:
+  html_document:  
+    theme: readable
+    code_folding: hide
+    fig_align: 'center'
+---
+
+```{r load_libraries, include=FALSE}
+
+library(tidyverse)
+library(lubridate)
+library(data.table)
+library(ggplot2)
+
+```
+
+```{r load_data}
+
+journals_raw <- read_csv("../../derived_data/journal_sentiments.csv")
+
+events_raw <- read_csv("significant_events.csv")
+
+```
+
+```{r tidy_data}
+
+journals <- journals_raw %>%
+  mutate(date = as.Date(date, format="%B %d, %Y")) %>%
+  filter(sentiment != 0) %>%
+  na.omit() # drops two rows (invalid dates)
+
+journals
+
+```
+
+```{r fig.height=5, fig.width=20}
+
+plot <- ggplot(journals, aes(x = date, y = sentiment)) + 
+          # geom_point(size = 0.001) + 
+          geom_smooth(
+            method = 'loess', 
+            formula = y ~ x, 
+            se = FALSE, 
+            span = 0.05, 
+            color = 'black')
+
+```
+
+```{r}
+
+# gets fitted points from geom_smooth
+fitted <- as.data.table(ggplot_build(plot)$data)
+
+events <- events_raw %>%
+  mutate(
+    date = as.Date(date, format="%d %B %Y"), 
+    x = as.numeric(date)) %>%
+  as.data.table()
+
+# joins on closest x-value (date as numeric)
+events_fitted <- fitted[events, on='x', roll = 'nearest'] %>%
+  as.data.frame() %>%
+  select(date, event, x, y)
+
+fitted
+events
+events_fitted
+  
+```
+
+```{r fig.height=5, fig.width=20}
+
+plot + 
+  geom_point(data = events_fitted, 
+             aes(x = date, y = y), 
+             size = 3, color = 'red') + 
+  labs(title = "Sentiment of Wilford Woodruff\'s Journal Entries",
+       x = '', 
+       y = "Sentiment") + 
+  theme_bw() + 
+  theme(plot.title = element_text(hjust = 0.5, size = 25))
+
+```
+
+```{r}
+
+# sort data, loop until find previous and following 
+# points; finds slope and gets y-value
+gg_data <- ggplot_build(plot)$data
+
+sorted <- gg_data %>%
+  as.data.frame() %>%
+  arrange(x)
+
+```

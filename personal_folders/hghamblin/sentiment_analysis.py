@@ -7,7 +7,9 @@ url = "https://github.com/BYUIDSS/DSS_S22_Wilford_Woodruff_Papers/blob/master/ra
 wwp = pd.read_csv(url, encoding = 'unicode-escape')
 
 # %%
+import nltk
 sia = SentimentIntensityAnalyzer()
 wwp['Sentiment'] = wwp['Text Only Transcript'].astype(str).map(sia.polarity_scores).str['compound']
 
 # %%
+

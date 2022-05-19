@@ -2,6 +2,7 @@
 import re
 import pandas as pd
 from nltk.sentiment import SentimentIntensityAnalyzer
+import seaborn as sns
 
 # %%
 with open('derived_data/journals.txt') as journals_file:

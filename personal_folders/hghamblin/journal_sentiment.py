@@ -34,5 +34,5 @@ sia = SentimentIntensityAnalyzer()
 wwp['sentiment'] = wwp['entry'].astype(str).map(sia.polarity_scores).str['compound']
 
 # %%
-wwp.to_csv('journal_sentiments.csv', index=False)
+wwp.to_csv('../../derived_data/journal_sentiments.csv', index=False)
 # %%

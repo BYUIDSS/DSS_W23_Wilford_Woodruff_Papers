@@ -51,30 +51,59 @@ plot <- ggplot(journals, aes(x = date, y = sentiment)) +
 
 ```{r}
 
-# gets fitted points from geom_smooth
-fitted <- as.data.table(ggplot_build(plot)$data)
+fit_smooth <- function(date) {
+  
+  # prep data
+  gg_data <- ggplot_build(plot)$data %>%
+    as.data.frame() %>%
+    mutate(distance = x - as.numeric(date)) %>%
+    select(x, y, distance)
+  
+  # get closest points to left
+  below <- filter(gg_data, distance < 0)
+  p0 <- below[which.max(below$distance),]
+  
+  # get closest point to right
+  above <- filter(gg_data, distance > 0)
+  p1 <- above[which.min(above$distance),]
+  
+  # get point to left
+  x0 <- p0$x
+  y0 <- p0$y
+  
+  # get point to right
+  x1 <- p1$x
+  y1 <- p1$y
+  
+  # calculate change in y versus (x0, y0)
+  slope <- (y1 - y0) / (x1 - x0)
+  dx <- as.numeric(date) - x0
+  dy <- y0 + (dx * slope)
+  
+  # adjust y-value
+  y <- y0 + dy
+  
+  return(y)
+  
+}
+
+```
+
+```{r}
 
 events <- events_raw %>%
   mutate(
     date = as.Date(date, format="%d %B %Y"), 
-    x = as.numeric(date)) %>%
-  as.data.table()
+    y = fit_smooth(date))
 
-# joins on closest x-value (date as numeric)
-events_fitted <- fitted[events, on='x', roll = 'nearest'] %>%
-  as.data.frame() %>%
-  select(date, event, x, y)
-
-fitted
 events
-events_fitted
-  
+
 ```
 
 ```{r fig.height=5, fig.width=20}
 
 plot + 
-  geom_point(data = events_fitted, 
+  geom_point(data = events, 
              aes(x = date, y = y), 
              size = 3, color = 'red') + 
   labs(title = "Sentiment of Wilford Woodruff\'s Journal Entries",
@@ -82,17 +111,5 @@ plot +
        y = "Sentiment") + 
   theme_bw() + 
   theme(plot.title = element_text(hjust = 0.5, size = 25))
-
-```
-
-```{r}
-
-# sort data, loop until find previous and following 
-# points; finds slope and gets y-value
-gg_data <- ggplot_build(plot)$data
-
-sorted <- gg_data %>%
-  as.data.frame() %>%
-  arrange(x)
 
 ```

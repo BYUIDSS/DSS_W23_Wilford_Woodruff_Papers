@@ -5,7 +5,7 @@ from nltk.sentiment import SentimentIntensityAnalyzer
 import seaborn as sns
 
 # %%
-with open('derived_data/journals.txt') as journals_file:
+with open('../../derived_data/journals.txt') as journals_file:
     text = journals_file.read()
 
 # %%

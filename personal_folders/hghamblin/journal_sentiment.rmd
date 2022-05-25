@@ -14,6 +14,7 @@ library(tidyverse)
 library(lubridate)
 library(data.table)
 library(ggplot2)
+library(purrr)
 
 ```
 
@@ -21,7 +22,7 @@ library(ggplot2)
 
 journals_raw <- read_csv("../../derived_data/journal_sentiments.csv")
 
-events_raw <- read_csv("significant_events.csv")
+events_raw <- read_csv("../../derived_data/significant_events.csv")
 
 ```
 
@@ -51,41 +52,13 @@ plot <- ggplot(journals, aes(x = date, y = sentiment)) +
 
 ```{r}
 
-fit_smooth <- function(date) {
-  
-  # prep data
-  gg_data <- ggplot_build(plot)$data %>%
-    as.data.frame() %>%
-    mutate(distance = x - as.numeric(date)) %>%
-    select(x, y, distance)
-  
-  # get closest points to left
-  below <- filter(gg_data, distance < 0)
-  p0 <- below[which.max(below$distance),]
-  
-  # get closest point to right
-  above <- filter(gg_data, distance > 0)
-  p1 <- above[which.min(above$distance),]
-  
-  # get point to left
-  x0 <- p0$x
-  y0 <- p0$y
-  
-  # get point to right
-  x1 <- p1$x
-  y1 <- p1$y
-  
-  # calculate change in y versus (x0, y0)
-  slope <- (y1 - y0) / (x1 - x0)
-  dx <- as.numeric(date) - x0
-  dy <- y0 + (dx * slope)
-  
-  # adjust y-value
-  y <- y0 + dy
-  
-  return(y)
-  
-}
+gg_data <- ggplot_build(plot)$data %>%
+  as.data.frame() %>%
+  mutate(roll_x = x) %>%
+  select(roll_x, x, y) %>%
+  as.data.table()
+
+gg_data
 
 ```
 
@@ -94,18 +67,35 @@ fit_smooth <- function(date) {
 events <- events_raw %>%
   mutate(
     date = as.Date(date, format="%d %B %Y"), 
-    y = fit_smooth(date))
+    roll_x = as.numeric(date)) %>%
+  as.data.table()
 
-events
+before <- gg_data[events, on = 'roll_x', roll = Inf] %>%
+  as.data.frame() %>%
+  na.omit()
+
+after <- gg_data[events, on = 'roll_x', roll = -Inf] %>%
+  as.data.frame() %>%
+  na.omit()
+
+events_fitted <- merge(before, after, by = c('roll_x', 'date', 'event'), suffixes = c('.lower', '.upper')) %>%
+  mutate(
+    slope = (y.upper - y.lower) / (x.upper - x.lower), 
+    dx = roll_x - x.lower, 
+    dy = slope * dx, 
+    y = y.lower + dy) %>%
+  select(date, event, y, slope)
+
+events_fitted
 
 ```
 
 ```{r fig.height=5, fig.width=20}
 
 plot + 
-  geom_point(data = events, 
+  geom_point(data = events_fitted, 
              aes(x = date, y = y), 
-             size = 3, color = 'red') + 
+             size = 2, color = 'red') + 
   labs(title = "Sentiment of Wilford Woodruff\'s Journal Entries",
        x = '', 
        y = "Sentiment") + 

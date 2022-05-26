@@ -14,6 +14,7 @@ library(tidyverse)
 library(lubridate)
 library(data.table)
 library(ggplot2)
+library(purrr)
 
 ```
 
@@ -21,7 +22,7 @@ library(ggplot2)
 
 journals_raw <- read_csv("../../derived_data/journal_sentiments.csv")
 
-events_raw <- read_csv("significant_events.csv")
+events_raw <- read_csv("../../derived_data/significant_events.csv")
 
 ```
 
@@ -51,24 +52,42 @@ plot <- ggplot(journals, aes(x = date, y = sentiment)) +
 
 ```{r}
 
-# gets fitted points from geom_smooth
-fitted <- as.data.table(ggplot_build(plot)$data)
+gg_data <- ggplot_build(plot)$data %>%
+  as.data.frame() %>%
+  mutate(roll_x = x) %>%
+  select(roll_x, x, y) %>%
+  as.data.table()
+
+gg_data
+
+```
+
+```{r}
 
 events <- events_raw %>%
   mutate(
     date = as.Date(date, format="%d %B %Y"), 
-    x = as.numeric(date)) %>%
+    roll_x = as.numeric(date)) %>%
   as.data.table()
 
-# joins on closest x-value (date as numeric)
-events_fitted <- fitted[events, on='x', roll = 'nearest'] %>%
+before <- gg_data[events, on = 'roll_x', roll = Inf] %>%
   as.data.frame() %>%
-  select(date, event, x, y)
+  na.omit()
 
-fitted
-events
+after <- gg_data[events, on = 'roll_x', roll = -Inf] %>%
+  as.data.frame() %>%
+  na.omit()
+
+events_fitted <- merge(before, after, by = c('roll_x', 'date', 'event'), suffixes = c('.lower', '.upper')) %>%
+  mutate(
+    slope = (y.upper - y.lower) / (x.upper - x.lower), 
+    dx = roll_x - x.lower, 
+    dy = slope * dx, 
+    y = y.lower + dy) %>%
+  select(date, event, y, slope)
+
 events_fitted
-  
+
 ```
 
 ```{r fig.height=5, fig.width=20}
@@ -76,23 +95,11 @@ events_fitted
 plot + 
   geom_point(data = events_fitted, 
              aes(x = date, y = y), 
-             size = 3, color = 'red') + 
+             size = 2, color = 'red') + 
   labs(title = "Sentiment of Wilford Woodruff\'s Journal Entries",
        x = '', 
        y = "Sentiment") + 
   theme_bw() + 
   theme(plot.title = element_text(hjust = 0.5, size = 25))
-
-```
-
-```{r}
-
-# sort data, loop until find previous and following 
-# points; finds slope and gets y-value
-gg_data <- ggplot_build(plot)$data
-
-sorted <- gg_data %>%
-  as.data.frame() %>%
-  arrange(x)
 
 ```

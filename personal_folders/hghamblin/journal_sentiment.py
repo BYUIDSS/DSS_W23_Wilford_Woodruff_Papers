@@ -2,9 +2,10 @@
 import re
 import pandas as pd
 from nltk.sentiment import SentimentIntensityAnalyzer
+import seaborn as sns
 
 # %%
-with open('derived_data/journals.txt') as journals_file:
+with open('../../derived_data/journals.txt') as journals_file:
     text = journals_file.read()
 
 # %%
@@ -33,5 +34,5 @@ sia = SentimentIntensityAnalyzer()
 wwp['sentiment'] = wwp['entry'].astype(str).map(sia.polarity_scores).str['compound']
 
 # %%
-wwp.to_csv('journal_sentiments.csv', index=False)
+wwp.to_csv('../../derived_data/journal_sentiments.csv', index=False)
 # %%

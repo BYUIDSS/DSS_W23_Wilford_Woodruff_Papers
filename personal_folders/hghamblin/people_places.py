@@ -1,6 +1,8 @@
 # %%
 import re
 import pandas as pd
+import geopy
+from geopy.geocoders import Nominatim
 
 # %%
 with open("../../derived_data/journals.txt", encoding = 'utf-8') as journals_file:
@@ -38,3 +40,16 @@ wwp_df['name_type'] = wwp_df['clean'].map(get_type)
 wwp_df['name_type'].value_counts()
 
 # %%
+places_df = wwp_df.query("name_type == 'place'")
+
+def get_latitude(town):
+    geolocator = Nominatim(user_agent="WWPapers")
+    location = geolocator.geocode(town)
+    return location.latitude
+def get_longitude(town):
+    geolocator = Nominatim(user_agent="WWPapers")
+    location = geolocator.geocode(town)
+    return location.longitude
+print(get_latitude("Birmingham, Warwickshire, England"))
+places_df['Latitude'] = places_df['clean'].map(get_latitude)
+places_df['Longitude'] = places_df['clean'].map(get_longitude)

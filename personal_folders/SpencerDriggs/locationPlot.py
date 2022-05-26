@@ -5,6 +5,7 @@ import csv
 
 # This is where we find all the text addresses (regex), make it a big dictionary?
 town_dict = []
+town_dict.append("Salt Lake City, Salt Lake County, Utah Territory")
 #Turn those town names into coordinates
 geolocator = Nominatim(user_agent="WWPapers")
 
@@ -21,8 +22,3 @@ with open('alltown.csv', 'w') as f:
     write = csv.writer(f) 
     write.writerow(["townName","Latitude","Longitude"]) 
     write.writerows(town_dict)
-
-#df = pd.DataFrame(data=town_dict, index=[0])
-#df = (df.T)
-#print (df)
-#df.to_excel('dict1.xlsx') 

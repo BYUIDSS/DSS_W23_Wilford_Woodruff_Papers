@@ -57,6 +57,5 @@ def get_longitude(town):
         return ""
 places_df['Latitude'] = places_df['clean'].map(get_latitude)
 places_df['Longitude'] = places_df['clean'].map(get_longitude)
-# %%
-coordinateplaces_df = places_df.query("Latitude != ''")
+
 # %%

@@ -10,12 +10,16 @@ town_dict.append("Salt Lake City, Salt Lake County, Utah Territory")
 geolocator = Nominatim(user_agent="WWPapers")
 
 #loop all of this
-location = geolocator.geocode("Birmingham, Warwickshire, England")
-town_dict.append(["hree", location.latitude, location.longitude])
+try:
+    print(geolocator.geocode("Cyprus, Benton County, Tennessee").longitude())
+except:
+    print("nope")
+
+#town_dict.append(["hree", location.latitude, location.longitude])
 #name of town, latitude, longitude, journal date
 #in tableau, show how many times he references a town
 
-print(location.latitude, location.longitude)
+#print(location.latitude, location.longitude)
 
 #print each row to a csv file
 with open('alltown.csv', 'w') as f: 

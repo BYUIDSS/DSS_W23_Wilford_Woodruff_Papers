@@ -16,7 +16,7 @@ import random
 import json
 import pickle
 
-with open("intents.json") as file:
+with open("chatbot\intents.json") as file:
     data = json.load(file)
 
 train = input("Train the model type in (train): ")

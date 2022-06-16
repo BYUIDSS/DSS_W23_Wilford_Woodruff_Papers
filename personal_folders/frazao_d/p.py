@@ -2,6 +2,10 @@ import re
 
 with open('derived_data\journals.txt') as journals_file:
     text = journals_file.read()
+    clean_text_list = []
+    a1 = text
+    a2 = a1.replace('[[','').replace(']]','').replace('[figure','').replace(']','')
+    clean_text_list.append(a2)
 
 def get_nouns(text):
 
@@ -15,12 +19,8 @@ def get_nouns(text):
     # People and place lists initialized
     clean_place = []
     clean_people = []
-    clean_text_list = []
     # The nouns are captured from given text.
     captured = re.findall(pattern, text)
-    a1 = text
-    a2 = a1.replace('[[','').replace(']]','').replace('[figure','').replace(']','')
-    clean_text_list.append(a2)
 
     # The nouns are cleaned of brackets and the pipe symbol and split into people and places.
     for noun in captured:

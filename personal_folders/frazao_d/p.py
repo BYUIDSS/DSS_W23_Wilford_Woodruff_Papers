@@ -4,8 +4,9 @@ with open('derived_data\journals.txt') as journals_file:
     text = journals_file.read()
     clean_text_list = []
     a1 = text
-    a2 = a1.replace('[[','').replace(']]','').replace('[figure','').replace(']','')
+    a2 = a1.replace('[[','').replace(']]','').replace('[FIGURE','').replace(']','')
     clean_text_list.append(a2)
+    print(clean_text_list)
 
 def get_nouns(text):
 

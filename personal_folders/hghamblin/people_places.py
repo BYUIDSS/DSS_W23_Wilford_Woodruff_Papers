@@ -60,3 +60,5 @@ places_df['Longitude'] = places_df['clean'].map(get_longitude)
 # %%
 coordinateplaces_df = places_df.query("Latitude != ''")
 # %%
+coordinateplaces_df.to_csv('fullplaces.csv')
+# %%

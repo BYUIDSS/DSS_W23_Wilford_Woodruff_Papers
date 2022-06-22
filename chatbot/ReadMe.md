@@ -1,10 +1,13 @@
-## Challenges
-* Make a working chat bot
-* Get the chat bot to talk 
-* Have voice input
-
 ## Imports
 * nltk
 * numpy
 * tflearn
 * Tensorflow
+
+## Sections for Intents (tags)
+* help
+* about me
+* where I'm from
+* Greetings
+* Visuals
+* Journal (Maybe)

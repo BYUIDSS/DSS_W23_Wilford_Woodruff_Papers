@@ -5,19 +5,24 @@
          "context_set": ""
         },
         {"tag": "help",
-         "patterns": ["Can you help me"],
+         "patterns": ["Can you help me","what can I do", "What are some option"],
          "responses": ["helping"],
          "context_set": ""
         },
         {"tag": "location",
-         "patterns": ["Where were you located"],
+         "patterns": ["Where were you located", "Location", "Where are you stationed"],
          "responses": ["located"],
          "context_set": ""
         },
         {"tag": "Visual",
-        "patterns": ["let me see"],
+        "patterns": ["let me see", "show some visuals", "let me see some graphs"],
         "responses": ["visualization"],
         "context_set": ""
+        },
+        {"tag": "About us",
+                "patterns": ["tell me about you","let me hear about your organization", "hear"],
+                "responses": ["about us"],
+                "context_set": ""
         }
    ]
 }

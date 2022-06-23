@@ -16,7 +16,7 @@ import random
 import json
 import pickle
 
-with open("chatbot\intents.json") as file:
+with open("DSS_S22_Wilford_Woodruff_Papers\\chatbot\\intents.json") as file:
     data = json.load(file)
 
 train = input("Train the model type in (train): ")
@@ -55,10 +55,10 @@ if train.lower() == "train":
     OHE: [1, 0, 1]
 
     Put a 1 if that word exist else put a 0
-    '''
+    ''' 
 
     training = []
-    output = []
+    output = [] 
 
     out_empty = [0 for _ in range(len(labels))]
 
@@ -95,10 +95,10 @@ else:
 #Data preprocessing end
 
 #Model creation start
-ops.reset_default_graph()
+ops.reset_default_graph()           
 #Input layer trying to get the length from none on
-net = tflearn.input_data(shape= [None, len(training[0])])
-net = tflearn.fully_connected(net, 16, activation="relu") #hidden layer
+net = tflearn.input_data(shape= [None, len(training[0])])       
+net = tflearn.fully_connected(net, 16, activation="relu") #hidden layer     
 net = tflearn.fully_connected(net, 16, activation="relu") #hidden layer
 #Output layer solfmax 
 net = tflearn.fully_connected(net, len(output[0]), activation="softmax")
@@ -159,7 +159,8 @@ def chat():
             if tg['tag'] == tag:
                 responses = tg['responses']
 
-        print(random.choice(responses))
+        print(random.choice(responses))         
+
 
 
 chat()

@@ -1,0 +1,8 @@
+placeholder = ""
+start = text.index("|")
+end = text.index("]")
+while start != end + 1:
+    placeholder += text[start]
+    start+=1
+
+replace(placeholder, "")

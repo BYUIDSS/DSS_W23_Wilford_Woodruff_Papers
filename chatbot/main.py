@@ -159,7 +159,22 @@ def chat():
             if tg['tag'] == tag:
                 responses = tg['responses']
 
-        print(random.choice(responses))         
+        choice = random.choice(responses)   
+
+        if choice =="located":
+            print("location")
+
+        elif choice == "helping":
+            print("help")
+
+        elif choice == "visualization":
+            print("visualal")
+        
+        elif choice == "about us":
+            print("about")
+        
+        else:
+            print(choice)     
 
 
 

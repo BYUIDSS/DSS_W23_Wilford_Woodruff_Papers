@@ -30,5 +30,8 @@ wwp['Nouns'] = wwp['entry'].map(get_nouns)
 nouns_df = pd.DataFrame(wwp['Nouns'].tolist(), columns=['People', 'Places'])
 wwp = pd.concat([wwp, nouns_df], axis=1)
 wwp.drop(columns = ['Nouns'], inplace = True)
-
+def cleaning_data(text):
+ a2 = text.replace('[[','').replace(']]','').replace('[figure','').replace(']','')
+ return a2
 wwp.to_csv("derived_data/journals.csv")
+wwp['entry'] = wwp['entry'].map(cleaning_data)

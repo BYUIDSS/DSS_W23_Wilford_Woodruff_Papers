@@ -1,15 +1,12 @@
-
+#%%
+from urllib import response
+import nltk 
+nltk.download('punkt')
+from nltk.stem.lancaster import LancasterStemmer
+stemmer = LancasterStemmer()
 import pandas as pd
-import altair as alt
-import numpy as np
-
-from IPython.display import Markdown
-from IPython.display import display
-from tabulate import tabulate
-
-
-topics_list = ['repent',
-            'Family',
+#%%
+topics = ['Family',
             'Conference',
             'Help',
             'Death',
@@ -63,39 +60,20 @@ topics_list = ['repent',
             'Guidance',
             'Home'
 ]
+real_data = pd.read_csv('C:\\Users\\tyler\\societies\\datascience\\ww_papers\\DSS_W23_Wilford_Woodruff_Papers\\notebook\\wwp.csv')
 
-wwp = pd.read_csv("./notebook/wwp.csv")
-wwp.rename(columns={"Text Only Transcript": "text_only_transcript"}, inplace=True)
+#%%
+def stemmer_de_stem(stemming_data):
+    data = [stemmer.stem(w.lower()) for w in stemming_data if w not in '?']
 
+    return data
 
-clean = (wwp
-    .replace([-999, "", "NAN", "nan", "n/a", "NaN", np.nan], "")
-    .replace("&amp;", "and")
-)
+#%%
+my_stem = stemmer_de_stem(topics)
 
-# add empty lists in new column named topics
-clean['topics'] = [[] for _ in range(len(clean))]
-
-
-
-def filter_my_data(pd_dataframe, filter_exp):
-    return pd_dataframe.query('text_only_transcript.str.contains(@filter_exp)')
-
-
-def findPlace_topics(clean, topic):
-    filtered_dataframe = filter_my_data(clean, topic)
-
-    for index in filtered_dataframe.index:
-        clean['topics'][index].append(topic)
-    
-    return filtered_dataframe, clean
-    
-for i in topics_list:
-    filtered_dataframe, clean = findPlace_topics(clean, i)
-
-print(filtered_dataframe.head(5))
-print(clean["topics"][154])
-
-
-print(clean.head(10))
-
+#%%
+print(my_stem)
+#%%
+real_data['text_only_transcript'][0]
+# %%
+real_data['topics'][43]

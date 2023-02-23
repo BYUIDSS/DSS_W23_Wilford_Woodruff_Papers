@@ -90,6 +90,27 @@ def findPlace_topics(clean, topic):
     
     return filtered_dataframe, clean
     
+
+import re
+from nltk.metrics import edit_distance 
+
+def find_misspelled(word):
+    regex = '|'.join(['(' + re.escape(word[:i]) + '.' + re.escape(word[i+1:]) + ')' for i in range(len(word))])
+    
+   
+    with open('notebook\\english3.txt') as f:
+        dictionary = set(word.strip().lower() for word in f)
+    matches = [match.group() for match in re.finditer(regex, ' '.join(dictionary))]
+    
+    
+    return [match for match in matches if edit_distance(match, word) <= 1]
+
+misspelled_words = dict()
+for topic in topics_list:
+    misspelled_words[topic] = find_misspelled(topic)
+
+print(misspelled_words)
+
 for i in topics_list:
     filtered_dataframe, clean = findPlace_topics(clean, i)
 
@@ -99,3 +120,6 @@ print(clean["topics"][154])
 
 print(clean.head(10))
 
+print(clean.info())
+
+clean.to_csv("C:\\Users\\tyler\\societies\\datascience\\ww_papers\\DSS_W23_Wilford_Woodruff_Papers\\notebook\\cleaned_wwp.csv")

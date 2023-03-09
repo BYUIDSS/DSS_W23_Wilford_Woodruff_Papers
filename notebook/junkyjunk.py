@@ -1,6 +1,5 @@
-
+#%% imports
 import pandas as pd
-import altair as alt
 import numpy as np
 
 from IPython.display import Markdown
@@ -63,21 +62,11 @@ topics_list = ['repent',
             'Guidance',
             'Home'
 ]
-
-wwp = pd.read_csv("./notebook/wwp.csv")
-wwp.rename(columns={"Text Only Transcript": "text_only_transcript"}, inplace=True)
-
-
-clean = (wwp
-    .replace([-999, "", "NAN", "nan", "n/a", "NaN", np.nan], "")
-    .replace("&amp;", "and")
-)
-
-# add empty lists in new column named topics
-clean['topics'] = [[] for _ in range(len(clean))]
+#%% get notebook
 
 
 
+#%% functions
 def filter_my_data(pd_dataframe, filter_exp):
     return pd_dataframe.query('text_only_transcript.str.contains(@filter_exp)')
 
@@ -97,29 +86,72 @@ from nltk.metrics import edit_distance
 def find_misspelled(word):
     regex = '|'.join(['(' + re.escape(word[:i]) + '.' + re.escape(word[i+1:]) + ')' for i in range(len(word))])
     
-   
-    with open('notebook\\english3.txt') as f:
+    #Find words in the english3.txt files so we can 
+    with open('C:/Users/tyler/societies/datascience/ww_papers/DSS_W23_Wilford_Woodruff_Papers/notebook/english3.txt') as f:
         dictionary = set(word.strip().lower() for word in f)
     matches = [match.group() for match in re.finditer(regex, ' '.join(dictionary))]
     
-    
-    return [match for match in matches if edit_distance(match, word) <= 1]
+    misspelled = [match for match in matches if edit_distance(match, word) <= 1]
+    misspelled = sorted(list(set(misspelled)))
+    return misspelled
 
+#%%
 misspelled_words = dict()
 for topic in topics_list:
     misspelled_words[topic] = find_misspelled(topic)
+#%%
+misspelled_words
 
-print(misspelled_words)
+#%%
+wwp = pd.read_csv("https://raw.githubusercontent.com/BYUIDSconsulting/woodruff_stories/master/personal_folders/treylusk/WW_by_date.csv")
+wwp.rename(columns={"Text Only Transcript": "text_only_transcript"}, inplace=True)
 
+
+clean = (wwp
+    .replace([-999, "", "NAN", "nan", "n/a", "NaN", np.nan], "")
+    .replace("&amp;", "and")
+)
+
+for topic in topics_list:
+    clean = (clean
+        .replace(misspelled_words[topic], topic)
+    )
+
+# add empty lists in new column named topics
+clean['topics'] = [[] for _ in range(len(clean))]
+
+
+#%%
+clean.head()
+#%%
+misspelled_words
+#%%
+from nltk.stem.lancaster import LancasterStemmer
+stemmer = LancasterStemmer()
+#%%
+wrds = [stemmer.stem(w) for w in clean['text_only_transcript'][0]]
+#%%
+m = ''
+for w in wrds:
+    m += w
+
+print(m)
+#%%
+
+clean['text_only_transcript'][0]
+#%%
 for i in topics_list:
     filtered_dataframe, clean = findPlace_topics(clean, i)
 
+#%%
 print(filtered_dataframe.head(5))
 print(clean["topics"][154])
 
-
+#%%
 print(clean.head(10))
 
+#%%
 print(clean.info())
 
-clean.to_csv("C:\\Users\\tyler\\societies\\datascience\\ww_papers\\DSS_W23_Wilford_Woodruff_Papers\\notebook\\cleaned_wwp.csv")
+
+# %%

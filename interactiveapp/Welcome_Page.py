@@ -13,8 +13,8 @@ from PIL import Image
 
 def welcome_page():
     st.write("# Welcome To The Wilford Woodruff Papers")
-    st.write("Our project uses a Graph Neural Network, or GNN, to analyze the Zinc database and identify potential drug candidates. The Zinc database is a large collection of purchasable compounds that can be used for drug discovery. Traditional methods for identifying potential drug candidates from this database don't work well, though, because the compounds are represented as nodes in a graph with various relationships represented as edges in the graph, such as similarity or chemical properties. By using a GNN and leveraging the graph structure of the database, we aim to overcome these limitations and discover new drugs that could save lives.")
-    st.write("To overcome these challenges, we can use a GNN to learn representations of the compounds that take into account their relationships with each other. This allows us to identify potential drug candidates that may have been missed by traditional methods.")
+    st.write("Wilford Woodruff was the fourth president of The Church of Jesus Christ of Latter-day Saints, known for his early leadership in the Church, missionary work, and involvement in the migration to Utah. He was baptized in 1833 and served as a missionary in several states and in England. Wilford Woodruff is also remembered for his practice and later abandonment of plural marriage, as well as for his role as a historian and record-keeper. Woodruff passed away in 1898.")
+    st.write("Our goal was to analyze the provided text file of Wilford Woodruff journals and populate the column data into the date column. We scanned the text file for location, people, and places. Another goal we had was to match text references from the journals to the scriptures. All this data was then used to create an interactive map. This map shows where Woodruff was during important events in his life.")
     # st.write("## What we are trying to solve")
 
 

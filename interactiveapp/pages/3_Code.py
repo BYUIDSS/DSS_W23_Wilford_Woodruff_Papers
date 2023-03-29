@@ -82,7 +82,7 @@ topics_list = ['repent', 'Family', 'Conference', 'Help','Death',
 ]
 wwp = pd.read_csv("https://raw.githubusercontent.com/BYUIDSconsulting/woodruff_stories/master/personal_folders/treylusk/WW_by_date.csv")
     ''','python')
-    st.write("This is how we grabbed the topics and loaded in the data.")
+    st.write("This is how we grabbed the topics and load in the data.")
     st.write("#### Data:")
     st.dataframe(wwp)
     st.subheader("Find Misspelled words")
@@ -201,6 +201,11 @@ for i in topics_list:
     st.dataframe(filtered_dataframe)
     st.write('##### Main Data')
     st.dataframe(clean, use_container_width=True)
+
+
+    st.subheader('Save Clean')
+    clean.to_csv('derived_data/cleaned_wwp.csv',index=False)
+    st.code('''clean.to_csv('derived_data/cleaned_wwp',index=False)''', 'python')
     st.header('Summary')
     st.write('This is a script written in Python that performs text analysis on a dataset of personal stories. The script defines a list of topics, which are then used to filter the dataset for stories that mention these topics. The script also uses the NLTK library to identify misspelled words and correct them using a stemmer. Finally, the script adds a new column to the dataset called "topics," which contains a list of the topics mentioned in each story. The script outputs the filtered dataset and the new "topics" column.')
     

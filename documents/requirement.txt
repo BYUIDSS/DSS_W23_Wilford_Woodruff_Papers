@@ -1,0 +1,11 @@
+streamlit
+streamlit_folium
+pandas
+matplotlib
+numpy
+folium
+nltk
+wordcloud
+plotly
+networkx
+scipy
